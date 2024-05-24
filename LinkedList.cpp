@@ -85,4 +85,78 @@ public:
         }
         length--;
     }
+
+    void prepend(int value) {
+        Node* newNode = new Node(value);
+        if (length == 0) {
+            head = newNode;
+            tail = newNode;
+        }
+        else {
+            newNode->next = head;
+            head = newNode;
+        }
+        length++;
+    }
+
+    void deleteFirst() {
+        if (length == 0) return;
+        Node* temp = head;
+        if (length == 1) {
+            head = nullptr;
+            tail = nullptr;
+        }
+        else {
+            head = head->next;
+        }
+        delete temp;
+        length--;
+    }
+
+    Node* getAtIndex(int index) {
+        if (index < 0 || index >= length) return nullptr;
+        Node* result = head;
+        for (int i = 0; i < index; i++) {
+            result = result->next;
+        }
+        return result;
+    }
+
+    bool setAtIndex(int index, int value) {
+        Node* temp = getAtIndex(index);
+        if (temp) {
+            temp->value = value;
+            return true;
+        }
+        return false;
+    }
+
+    bool insert(int index, int value) {
+        if (index < 0 || index > length) return false;
+        if (index == 0) { 
+            prepend(value); 
+            return true; 
+        };
+        if (index == length) {
+            append(value);
+            return true;
+        }
+        Node* temp = new Node(value);
+        Node* node = getAtIndex(index-1);
+        temp->next = node->next;
+        node->next = temp;
+        length++;
+        return true;
+    }
+
+    void deleteNodeAtIndex(int index) {
+        if (index < 0 || index >= length) return;
+        if (index == 0) return deleteFirst();
+        if (index == length - 1)  return deleteLast();
+        Node* prev = getAtIndex(index-1);
+        Node* temp = prev->next;
+        prev->next = temp->next;
+        delete temp;
+        length--;
+    }
 };
