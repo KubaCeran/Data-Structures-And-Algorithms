@@ -1,28 +1,21 @@
 #include <iostream>
+#include "Node.cpp"
 using namespace std;
 
-class Node {
-public:
-    Node(int val) {
-        value = val;
-        next = nullptr;
-    }
-    int value;
-    Node* next;
-};
-
+//Remove last element -> O(n)
+//Add to the end -> O(1)
+//Remove first element -> O(1)
+//Add to the begining -> O(1)
+//Insert between -> O(n)
+//Remove between -> O(n)
+//Search for the value -> O(n)
 class LinkedList {
 private:
     Node* head;
     Node* tail;
     int length;
-
 public:
-    LinkedList(int value) {
-        head = new Node(value);
-        tail = head;
-        length = 1;
-    };
+    LinkedList() : head(nullptr), tail(head), length(0) {};
 
     ~LinkedList() {
         Node* temp = head;
@@ -73,7 +66,7 @@ public:
             delete tail;
             head = nullptr;
             tail = nullptr;
-        } 
+        }
         else {
             Node* temp = head;
             while (temp->next != tail) {
@@ -101,15 +94,16 @@ public:
 
     void deleteFirst() {
         if (length == 0) return;
-        Node* temp = head;
         if (length == 1) {
+            delete head;
             head = nullptr;
             tail = nullptr;
         }
         else {
+            Node* temp = head;
             head = head->next;
+            delete temp;
         }
-        delete temp;
         length--;
     }
 
@@ -122,7 +116,7 @@ public:
         return result;
     }
 
-    bool setAtIndex(int index, int value) {
+    bool trySetAtIndex(int index, int value) {
         Node* temp = getAtIndex(index);
         if (temp) {
             temp->value = value;
@@ -131,32 +125,93 @@ public:
         return false;
     }
 
-    bool insert(int index, int value) {
+    bool tryInsert(int index, int value) {
         if (index < 0 || index > length) return false;
-        if (index == 0) { 
-            prepend(value); 
-            return true; 
-        };
+        if (index == 0) {
+            prepend(value);
+            return true;
+        }
         if (index == length) {
             append(value);
             return true;
         }
-        Node* temp = new Node(value);
-        Node* node = getAtIndex(index-1);
-        temp->next = node->next;
-        node->next = temp;
+        Node* newNode = new Node(value);
+        Node* prev = getAtIndex(index - 1);
+        newNode->next = prev->next;
+        prev->next = newNode;
         length++;
         return true;
     }
 
-    void deleteNodeAtIndex(int index) {
+    void deleteNode(int index) {
         if (index < 0 || index >= length) return;
         if (index == 0) return deleteFirst();
-        if (index == length - 1)  return deleteLast();
-        Node* prev = getAtIndex(index-1);
-        Node* temp = prev->next;
-        prev->next = temp->next;
-        delete temp;
+        if (index == length - 1) return deleteLast();
+
+        Node* prev = getAtIndex(index - 1);
+        Node* nodeToDelete = prev->next;
+        prev->next = nodeToDelete->next;
+        delete nodeToDelete;
         length--;
+    }
+
+    void reverse() {
+        Node* temp = head;
+        head = tail;
+        tail = temp;
+
+        Node* prev = nullptr;
+        Node* next = temp->next;
+        for (int i = 0; i < length; i++) {
+            next = temp->next;
+            temp->next = prev;
+            prev = temp;
+            temp = next;
+        }
+    }
+
+    Node* findMiddleNode() {
+        if (head == nullptr) return nullptr;
+        Node* slow = head;
+        Node* fast = head;
+
+        while (fast && fast->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        return slow;
+    }
+
+    bool hasLoop() {
+        if (length == 0) return false;
+
+        Node* slow = head;
+        Node* fast = head;
+
+
+        while (fast && fast->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+
+            if (slow == fast)
+                return true;
+        }
+        return false;
+    }
+
+    Node* findKthFromEnd(int k) {
+        Node* fast = head;
+        Node* slow = head;
+
+        for (int i = 0; i < k; i++) {
+            if (fast == nullptr) return nullptr;
+            fast = fast->next;
+        }
+        while (fast) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+
+        return slow;
     }
 };

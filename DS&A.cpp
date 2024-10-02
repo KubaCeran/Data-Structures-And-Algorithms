@@ -4,13 +4,20 @@
 
 int main()
 {
-    LinkedList* list = new LinkedList(15);
-    list->prepend(14);
-    list->prepend(13);
+    LinkedList* list = new LinkedList();
+    list->append(0);
+    list->append(1);
+    list->append(2);
+    list->append(3);
     list->printList();
-    list->deleteNodeAtIndex(3);
     cout << endl;
+    list->reverse();
     list->printList();
-    cout << "get: " << list->getAtIndex(1)->value;
+    /*cout << endl;
+
+    cout << list->getHeadValue() << endl;
+    cout << list->getTailValue() << endl;
+    cout << list->getLength() << endl;*/
+
     delete list;
 }
