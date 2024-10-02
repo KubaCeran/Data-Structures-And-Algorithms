@@ -17,6 +17,16 @@ private:
 public:
 	DoublyLinkedList() : head(nullptr), tail(nullptr), length(0) {};
 
+    ~DoublyLinkedList() {
+        DoublyNode* temp = head;
+        while (head) {
+            head = head->next;
+            delete temp;
+            temp = head;
+            length--;
+        }
+    }
+
     void printList() {
         DoublyNode* temp = head;
         while (temp) {
